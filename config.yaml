@@ -1,0 +1,102 @@
+pdf_path: ''
+
+# 実行Flg、画像出力・切り取り線PDF
+outputfile:
+  image: True
+  cutlinePDF: True
+
+page_data_list:
+  # Page毎に範囲定義を割り当て
+  # 未割り当てのページは飛ばされる
+  # 連続するPageはまとめて指定できる
+  pages:
+    - key: 'row1_short'
+      page_range: {start: 8, end: 9}
+    - key: 'row1'
+      page_range: {start: 10, end: 15}
+    - key: 'row1_short'
+      page_range: {start: 16, end: 16}
+    - key: 'row1'
+      page_range: {start: 17, end: 20}
+    - key: 'row3'
+      page_range: {start: 21, end: 31}
+    - key: 'row3_short'
+      page_range: {start: 32, end: 40}
+    - key: 'row3'
+      page_range: {start: 73, end: 73}
+    - key: 'row4'
+      page_range: {start: 74, end: 100}
+  options:
+    # 画像ごとに範囲の微調整を割り当て
+    # 複数指定可、+10,+10
+    offsets:
+      - target: {page_number: 22, image_number: 1}
+        keys:
+          - 'offset_bottom_narrow'
+      - target: {page_number: 22, image_number: 2}
+        keys:
+          - 'offset_top_wide'
+      - target: {page_number: 22, image_number: 3}
+        keys:
+          - 'offset_top_wide'
+          - 'offset_bottom_narrow'
+      - target: {page_number: 23, image_number: 2}
+        keys:
+          - 'offset_bottom_wide'
+      - target: {page_number: 26, image_number: 2}
+        keys:
+          - 'offset_top_wide'
+      - target: {page_number: 26, image_number: 3}
+        keys:
+          - 'offset_top_wide'
+      - target: {page_number: 27, image_number: 3}
+        keys:
+          - 'offset_bottom_narrow'
+      - target: {page_number: 30, image_number: 2}
+        keys:
+          - 'offset_bottom_wide'
+      - target: {page_number: 30, image_number: 3}
+        keys:
+          - 'offset_top_narrow'
+          - 'offset_bottom_wide'
+
+page_type_definitions:
+  # スクリーンショットの範囲定義
+  # Page左上からのピクセル数で指定
+  types:
+    row1:
+      # ページ内のスクリーンショット範囲リスト
+      # pointTL: 左上、pointBR: 右下
+      image_rects:
+        - {pointTL: {x: 60, y: 90}, pointBR: {x: 510, y: 600}}
+    row1_short:
+      image_rects:
+        - {pointTL: {x: 60, y: 90}, pointBR: {x: 510, y: 370}}
+    row3:
+      image_rects:
+        - {pointTL: {x: 60, y: 90}, pointBR: {x: 510, y: 290}}
+        - {pointTL: {x: 60, y: 290}, pointBR: {x: 510, y: 485}}
+        - {pointTL: {x: 60, y: 490}, pointBR: {x: 510, y: 700}}
+    row3_short:
+      image_rects:
+        - {pointTL: {x: 60, y: 90}, pointBR: {x: 510, y: 280}}
+        - {pointTL: {x: 60, y: 275}, pointBR: {x: 510, y: 460}}
+        - {pointTL: {x: 60, y: 460}, pointBR: {x: 510, y: 660}}
+    row4:
+      image_rects:
+        - {pointTL: {x: 60, y: 90}, pointBR: {x: 510, y: 250}}
+        - {pointTL: {x: 60,  y: 250}, pointBR: {x: 510, y: 425}}
+        - {pointTL: {x: 60,  y: 425}, pointBR: {x: 510, y: 590}}
+        - {pointTL: {x: 60,  y: 590}, pointBR: {x: 510, y: 770}}
+  options:
+    # スクリーンショットのoffset定義
+    offsets:
+      offset_top_wide: {pointTL: {x: 0, y: -10}, pointBR: {x: 0, y: 0}}
+      offset_top_narrow: {pointTL: {x: 0, y: 10}, pointBR: {x: 0, y: 0}}
+      offset_bottom_narrow: {pointTL: {x: 0, y: 0}, pointBR: {x: 0, y: -10}}
+      offset_bottom_wide: {pointTL: {x: 0, y: 0}, pointBR: {x: 0, y: 10}}
+      offset_left_wide: {pointTL: {x: -10, y: 0}, pointBR: {x: 0, y: 0}}
+      offset_left_narrow: {pointTL: {x: 10, y: 0}, pointBR: {x: 0, y: 0}}
+      offset_right_narrow: {pointTL: {x: 0, y: 0}, pointBR: {x: -10, y: 0}}
+      offset_right_wide: {pointTL: {x: 0, y: 0}, pointBR: {x: 10, y: 0}}
+
