@@ -12,8 +12,8 @@ def delete_files(dire: Path):
     for file in dire.iterdir():  # check_dir内をlsして1ファイルずつファイル名を取得
         if file.is_file():
             file.unlink()
-def get_dict_value(dic, key):
-    return dic[key] if key in dic else None
+def get_dict_value(dic, id):
+    return dic[id] if id in dic else None
 
 # Methods
 def get_page_type_list(config: Config, listsize: int):
@@ -21,11 +21,11 @@ def get_page_type_list(config: Config, listsize: int):
     
     types = [None for _ in range(listsize)]
     for page_data in data.pages:
-        key = page_data['key']
-        for pNum in range(page_data['page_range']['start'], page_data['page_range']['end'] + 1):
+        id = page_data['id']
+        for pNum in range(page_data['range']['start'], page_data['range']['end'] + 1):
             if pNum > len(types):
                 break
-            types[pNum - 1] = {'key': key, 'offset_dats': []}
+            types[pNum - 1] = {'id': id, 'offset_dats': []}
     if data.options['offsets']:
         for offset in data.options['offsets']:
             types[offset['target']['page_number'] - 1]['offset_dats'].append(offset)
@@ -78,7 +78,7 @@ def get_target_offset_defs(offset, def_dic):
     # offset = get_target_offset_data(offset_data_list, pagenum, imgnum)
     if not offset:
         return []
-    defs = [def_dic[key] for key in offset['keys']]
+    defs = [def_dic[id] for id in offset['ids']]
     return defs
 
 # 実行部
@@ -97,7 +97,7 @@ def main(config: Config) -> None:
     doc: fitz.Document = fitz.open(pdf_file)
     print('Open:', pdf_file)
     
-    types = get_page_type_list(config, len(doc)) # [{'key': None, 'offsetkey': None}, {'key': 'type1', 'offsetkey': None}, {'key': 'type1', 'offsetkey': ''}]
+    types = get_page_type_list(config, len(doc)) # [{'id': None, 'offsetid': None}, {'id': 'type1', 'offsetid': None}, {'id': 'type1', 'offsetid': ''}]
     
     # 1ページずつ処理
     for iPage, page in enumerate(doc.pages(stop=101)):
@@ -108,7 +108,7 @@ def main(config: Config) -> None:
         
         definitions: Definitions = config.definitions
         # Page内の画像矩形リスト
-        page_def_image_rects = definitions.rectangles[page_type['key']]['image_rects']
+        page_def_image_rects = definitions.rectangles[page_type['id']]['image_rects']
         # 画像でloop
         for imgidx, image_rect in enumerate(page_def_image_rects):
             offset_data = get_target_offset_data(page_type['offset_dats'] , iPage + 1, imgidx + 1)
@@ -120,7 +120,7 @@ def main(config: Config) -> None:
             
             if config.outputfile['image']:
                 pix = page.get_pixmap(dpi=300, clip=rect)
-                name = f'Page{str(iPage + 1).zfill(4)}_Img{str(imgidx + 1).zfill(1)}_{page_type['key']}.png'
+                name = f'Page{str(iPage + 1).zfill(4)}_Img{str(imgidx + 1).zfill(1)}_{page_type['id']}.png'
                 pix.save(output_dir / name)
             
     if config.outputfile['cutlinePDF']:

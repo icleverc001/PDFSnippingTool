@@ -10,53 +10,53 @@ page_data:
   # 未割り当てのページは飛ばされる
   # 連続するPageはまとめて指定できる
   pages:
-    - key: 'row1_short'
-      page_range: {start: 8, end: 9}
-    - key: 'row1'
-      page_range: {start: 10, end: 15}
-    - key: 'row1_short'
-      page_range: {start: 16, end: 16}
-    - key: 'row1'
-      page_range: {start: 17, end: 20}
-    - key: 'row3'
-      page_range: {start: 21, end: 31}
-    - key: 'row3_short'
-      page_range: {start: 32, end: 40}
-    - key: 'row3'
-      page_range: {start: 73, end: 73}
-    - key: 'row4'
-      page_range: {start: 74, end: 100}
+    - id: 'row1_short'
+      range: {start: 8, end: 9}
+    - id: 'row1'
+      range: {start: 10, end: 15}
+    - id: 'row1_short'
+      range: {start: 16, end: 16}
+    - id: 'row1'
+      range: {start: 17, end: 20}
+    - id: 'row3'
+      range: {start: 21, end: 31}
+    - id: 'row3_short'
+      range: {start: 32, end: 40}
+    - id: 'row3'
+      range: {start: 73, end: 73}
+    - id: 'row4'
+      range: {start: 74, end: 100}
   options:
     # 画像ごとに範囲の微調整を割り当て
     # 複数指定可、+10,+10
     offsets:
       - target: {page_number: 22, image_number: 1}
-        keys:
+        ids:
           - 'offset_bottom_narrow'
       - target: {page_number: 22, image_number: 2}
-        keys:
+        ids:
           - 'offset_top_wide'
       - target: {page_number: 22, image_number: 3}
-        keys:
+        ids:
           - 'offset_top_wide'
           - 'offset_bottom_narrow'
       - target: {page_number: 23, image_number: 2}
-        keys:
+        ids:
           - 'offset_bottom_wide'
       - target: {page_number: 26, image_number: 2}
-        keys:
+        ids:
           - 'offset_top_wide'
       - target: {page_number: 26, image_number: 3}
-        keys:
+        ids:
           - 'offset_top_wide'
       - target: {page_number: 27, image_number: 3}
-        keys:
+        ids:
           - 'offset_bottom_narrow'
       - target: {page_number: 30, image_number: 2}
-        keys:
+        ids:
           - 'offset_bottom_wide'
       - target: {page_number: 30, image_number: 3}
-        keys:
+        ids:
           - 'offset_top_narrow'
           - 'offset_bottom_wide'
 
