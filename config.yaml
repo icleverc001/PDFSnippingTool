@@ -5,7 +5,7 @@ outputfile:
   image: True
   cutlinePDF: True
 
-page_data_list:
+page_data:
   # Page毎に範囲定義を割り当て
   # 未割り当てのページは飛ばされる
   # 連続するPageはまとめて指定できる
@@ -60,10 +60,10 @@ page_data_list:
           - 'offset_top_narrow'
           - 'offset_bottom_wide'
 
-page_type_definitions:
+definitions:
   # スクリーンショットの範囲定義
   # Page左上からのピクセル数で指定
-  types:
+  rectangles:
     row1:
       # ページ内のスクリーンショット範囲リスト
       # pointTL: 左上、pointBR: 右下

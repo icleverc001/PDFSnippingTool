@@ -2,6 +2,10 @@ import sys, pymupdf
 from pathlib import Path
 import fitz
 import yaml
+sys.path.append('./pdf_snipping_tool/models')
+from pdf_snipping_tool.models.config import Config
+from pdf_snipping_tool.models.page_data import PageData
+from pdf_snipping_tool.models.definitions import Definitions
 
 # 一般操作
 def delete_files(dire: Path):
@@ -12,16 +16,18 @@ def get_dict_value(dic, key):
     return dic[key] if key in dic else None
 
 # Methods
-def get_page_type_list(config, listsize: int):
+def get_page_type_list(config: Config, listsize: int):
+    data: PageData = config.data
+    
     types = [None for _ in range(listsize)]
-    for page_data in config['page_data_list']['pages']:
+    for page_data in data['pages']:
         key = page_data['key']
         for pNum in range(page_data['page_range']['start'], page_data['page_range']['end'] + 1):
             if pNum > len(types):
                 break
             types[pNum - 1] = {'key': key, 'offset_dats': []}
-    if config['page_data_list']['options']['offsets']:
-        for offset in config['page_data_list']['options']['offsets']:
+    if data['options']['offsets']:
+        for offset in data['options']['offsets']:
             types[offset['target']['page_number'] - 1]['offset_dats'].append(offset)
     
     return types
@@ -76,17 +82,17 @@ def get_target_offset_defs(offset, def_dic):
     return defs
 
 # 実行部
-def main(config):
-    pdf_path = Path(config['pdf_path'])
+def main(config: Config):
+    pdf_file = Path(config.pdf_path)
 
     # 出力Directoryを用意
-    output_dir = pdf_path.parent / pdf_path.stem
+    output_dir: Path = pdf_file.parent / pdf_file.stem
     output_dir.mkdir(exist_ok=True)
     delete_files(output_dir)
     
     # PDFファイルを開く
-    doc = fitz.open(pdf_path)
-    print('Open:', pdf_path)
+    doc: fitz.Document = fitz.open(pdf_file)
+    print('Open:', pdf_file)
     
     types = get_page_type_list(config, len(doc)) # [{'key': None, 'offsetkey': None}, {'key': 'type1', 'offsetkey': None}, {'key': 'type1', 'offsetkey': ''}]
     
@@ -97,12 +103,13 @@ def main(config):
             print('skip:', iPage + 1)
             continue
         
+        definitions: Definitions = config.definitions
         # Page内の画像矩形リスト
-        page_def_image_rects = config['page_type_definitions']['types'][page_type['key']]['image_rects']
+        page_def_image_rects = definitions.rectangles[page_type['key']]['image_rects']
         # 画像でloop
         for imgidx, image_rect in enumerate(page_def_image_rects):
             offset_data = get_target_offset_data(page_type['offset_dats'] , iPage + 1, imgidx + 1)
-            offset_def_dic = config['page_type_definitions']['options']['offsets']
+            offset_def_dic = definitions.options['offsets']
             offset_defs = get_target_offset_defs(offset_data, offset_def_dic)
             rect = get_image_rect(image_rect, offset_defs)
             
@@ -117,14 +124,16 @@ def main(config):
         doc.save(output_dir / 'cutline.pdf')
 
 
-def config_load(config_path):
+def config_load(config_path: str) -> Config:
+    config: Config = Config(config_path)
+    return config
     with open(config_path, 'r', encoding='utf-8') as yml:
         config = yaml.safe_load(yml)
         return config
 
 
 if __name__ == '__main__':
-    config_path = './config.yaml'
-    config = config_load(config_path)
+    config_path: str = './config.yaml'
+    config: Config = config_load(config_path)
 
     main(config)
