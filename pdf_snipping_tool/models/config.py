@@ -5,32 +5,33 @@ import yaml
 import pprint
 
 class Config:
-    def __init__(self, config_path: str) -> None:
+    def __init__(self) -> None:
         self.__path: str = ''
         self.__pdf_path: str = ''
-        self.__page_data: PageData = None
-        self.__definitions: Definitions = None
-        
-        self.load(config_path)
+        self.__outputfile: dict[str, bool] = {}
+        self.__page_data: PageData = PageData()
+        self.__definitions: Definitions = Definitions()
         
     def load(self, config_path: str):
-        self.__clear()
+        self.clear()
         
         self.__path: str = config_path
         file: Path = Path(config_path)
-        if not file.exists():
+        if not file.is_file():
             return
         with file.open(mode='r', encoding='utf-8') as yml:
             config: dict[str, object] = yaml.safe_load(yml)
             self.__pdf_path = config['pdf_path']
-            self.__page_data = config['page_data']
-            self.__definitions = config['definitions']
+            self.__outputfile = config['outputfile']
+            self.__page_data.set_yaml_data(config['page_data'])
+            self.__definitions.set_yaml_data(config['definitions'])
 
-    def __clear(self):
+    def clear(self):
         self.__path = ''
         self.__pdf_path = ''
-        self.__page_data = None
-        self.__definitions = None
+        self.__outputfile.clear()
+        self.__page_data.clear()
+        self.__definitions.clear()
         
     @property
     def config_path(self) -> str:
@@ -38,6 +39,9 @@ class Config:
     @property
     def pdf_path(self) -> str:
         return self.__pdf_path
+    @property
+    def outputfile(self) -> dict[str, bool]:
+        return self.__outputfile
     @property
     def data(self) -> PageData:
         return self.__page_data

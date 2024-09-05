@@ -20,14 +20,14 @@ def get_page_type_list(config: Config, listsize: int):
     data: PageData = config.data
     
     types = [None for _ in range(listsize)]
-    for page_data in data['pages']:
+    for page_data in data.pages:
         key = page_data['key']
         for pNum in range(page_data['page_range']['start'], page_data['page_range']['end'] + 1):
             if pNum > len(types):
                 break
             types[pNum - 1] = {'key': key, 'offset_dats': []}
-    if data['options']['offsets']:
-        for offset in data['options']['offsets']:
+    if data.options['offsets']:
+        for offset in data.options['offsets']:
             types[offset['target']['page_number'] - 1]['offset_dats'].append(offset)
     
     return types
@@ -82,8 +82,11 @@ def get_target_offset_defs(offset, def_dic):
     return defs
 
 # 実行部
-def main(config: Config):
+def main(config: Config) -> None:
     pdf_file = Path(config.pdf_path)
+    
+    if not pdf_file.is_file():
+        return
 
     # 出力Directoryを用意
     output_dir: Path = pdf_file.parent / pdf_file.stem
@@ -115,17 +118,18 @@ def main(config: Config):
             
             page.draw_rect(rect, color=(1.0, 0.0, 0.0), width=1, dashes='[4] 0')
             
-            if config['outputfile']['image']:
+            if config.outputfile['image']:
                 pix = page.get_pixmap(dpi=300, clip=rect)
                 name = f'Page{str(iPage + 1).zfill(4)}_Img{str(imgidx + 1).zfill(1)}_{page_type['key']}.png'
                 pix.save(output_dir / name)
             
-    if config['outputfile']['cutlinePDF']:
+    if config.outputfile['cutlinePDF']:
         doc.save(output_dir / 'cutline.pdf')
 
 
 def config_load(config_path: str) -> Config:
-    config: Config = Config(config_path)
+    config: Config = Config()
+    config.load(config_path)
     return config
     with open(config_path, 'r', encoding='utf-8') as yml:
         config = yaml.safe_load(yml)
@@ -134,6 +138,6 @@ def config_load(config_path: str) -> Config:
 
 if __name__ == '__main__':
     config_path: str = './config.yaml'
-    config: Config = config_load(config_path)
-
-    main(config)
+    if Path(config_path).exists():
+        config: Config = config_load(config_path)
+        main(config)

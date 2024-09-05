@@ -1,16 +1,15 @@
 class Definitions:
-    def __init__(self, yaml: dict[str, object]) -> None:
+    def __init__(self) -> None:
         self.__rectangles: dict[str, object] = []
         self.__options: dict[str, object] = []
-        self.set_yaml_data(yaml)
     
     def set_yaml_data(self, yaml: dict[str, object]) -> None:
-        self.__clear()
+        self.clear()
         
         self.__rectangles = yaml['rectangles']
         self.__options = yaml['options']
     
-    def __clear(self) -> None:
+    def clear(self) -> None:
         self.__rectangles.clear()
         self.__options.clear()
     

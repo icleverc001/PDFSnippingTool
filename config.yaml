@@ -1,4 +1,4 @@
-pdf_path: ''
+pdf_path: './sample/cut_40.pdf'
 
 # 実行Flg、画像出力・切り取り線PDF
 outputfile:
