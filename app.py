@@ -37,6 +37,11 @@ def get_point(yaml_rect):
     p1 = pymupdf.Point(yaml_rect['pointBR']['x'], yaml_rect['pointBR']['y'])
     return p0, p1
 
+def get_color(list: list[object], index: int):
+    ir: int = index % len(list)
+    colordict: dict[str, float] = list[ir]
+    return (colordict['r'], colordict['g'], colordict['b'])
+
 def get_image_rect(img, offsets) -> pymupdf.Rect:
     p0, p1 = get_point(img)
     for offset in offsets:
@@ -116,7 +121,8 @@ def main(config: Config) -> None:
             offset_defs = get_target_offset_defs(offset_data, offset_def_dic)
             rect = get_image_rect(image_rect, offset_defs)
             
-            page.draw_rect(rect, color=(1.0, 0.0, 0.0), width=1, dashes='[4] 0')
+            color = get_color(config.colors['cut_lines'], imgidx)
+            page.draw_rect(rect, color=color, width=1, dashes='[4] 0')
             
             if config.outputfile['image']:
                 pix = page.get_pixmap(dpi=300, clip=rect)
